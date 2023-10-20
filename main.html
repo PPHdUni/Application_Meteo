@@ -10,11 +10,11 @@
 </head>
 <body>
 	<div class="jumbotron container" id="root">
-		<h1 class="text-center">Bonjour</h1>
+		<h1 class="text-center">Welcome</h1>
 	</div>
 	<script type="text/babel">
 	
-	class MeteoApp extends React.Component {
+	/*class MeteoApp extends React.Component {
 	
 		constructor(props) {
 			super(props);
@@ -29,36 +29,70 @@
 		
 		render() {
 		
-			
 		
 		}
 	
-	}
+	} */
+	
+	var welcome = true
 
-	function testFunction() {
+	function MeteoFunction() {
+	
+		var location = 0
+		var returnValue
 	  
 		const { useEffect } = React
 		const { useState } = React
 		
 		const [results,updateResults]=useState([]);
-	  
-		useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/todos')
-            .then(response => response.json())
-            .then(function(myJson) {
-				updateResults(myJson[0]);
-				console.log(results);
-			});
-		}, []);
-	  
-        return results.title
+		
+		const fetchMeteo = (event) => {
+		
+			location = event.target.location.value
+			event.preventDefault();
+			welcome = false
+		
+			fetch('https://jsonplaceholder.typicode.com/todos')
+				.then(response => response.json())
+				.then(function(myJson) {
+					updateResults(myJson[location].title);
+					console.log(location);
+				});
+		}
+								
+		if(welcome) {
+			returnValue = ( 
+				<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
+					 <label>
+					 Location :
+					 <input type="number" name="location" defaultValue={location}/>
+					 </label>
+					 <input type="submit" value="Submit" />
+				</form></div>
+				<div id="meteoInfo"><h1 class="text-center">Bonjour</h1></div></>
+						);}
+		else {
+			returnValue = ( 
+				<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
+					 <label>
+					 Location :
+					 <input type="number" name="location" defaultValue={location}/>
+					 </label>
+					 <input type="submit" value="Submit" />
+				</form></div>
+				<div id="meteoInfo"><h1 class="text-center">{results}</h1></div></>
+						);
+		}
+		
+		return returnValue
 	}
 
-	ReactDOM.render(<testFunction />, document.getElementById("root"));
+	const root = ReactDOM.createRoot(document.getElementById('root'));
+	root.render(<MeteoFunction />);
 	</script>
 </body>
 </html>
 <style>
     body {background-color: lightgrey;}
-	.jumbotron {background-color: powderblue;}
+	.jumbotron {background-color: white;}
 </style>
