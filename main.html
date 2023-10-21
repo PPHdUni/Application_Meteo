@@ -9,7 +9,8 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-	<div class="jumbotron container" id="root">
+	<h2 class="text-center">Current weather</h2>
+	<div class="jumbotron container" id="root" style="padding-bottom: 30%">
 		<h1 class="text-center">Welcome</h1>
 	</div>
 	<script type="text/babel">
@@ -38,8 +39,10 @@
 
 	function MeteoFunction() {
 	
-		var location = 0
+		var location = ""
 		var returnValue
+		
+		const key = "***REMOVED***"
 	  
 		const { useEffect } = React
 		const { useState } = React
@@ -52,36 +55,47 @@
 			event.preventDefault();
 			welcome = false
 		
-			fetch('https://jsonplaceholder.typicode.com/todos')
+			fetch('https://api.weatherapi.com/v1/current.json?key='+key+'&q='+location)
 				.then(response => response.json())
 				.then(function(myJson) {
-					updateResults(myJson[location].title);
+					updateResults(myJson);
 					console.log(location);
 				});
 		}
 								
 		if(welcome) {
 			returnValue = ( 
-				<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
-					 <label>
-					 Location :
-					 <input type="number" name="location" defaultValue={location}/>
-					 </label>
-					 <input type="submit" value="Submit" />
-				</form></div>
-				<div id="meteoInfo"><h1 class="text-center">Bonjour</h1></div></>
-						);}
+			<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
+				 <label>
+				 Location :
+				 <input type="text" name="location" defaultValue={location} size="50"/>
+				 </label>
+				 <input type="submit" value="Submit" />
+			</form></div>
+			<div id="meteoInfo">
+			<h1 class="text-center">Welcome</h1></div></>
+			);}
 		else {
 			returnValue = ( 
-				<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
-					 <label>
-					 Location :
-					 <input type="number" name="location" defaultValue={location}/>
-					 </label>
-					 <input type="submit" value="Submit" />
-				</form></div>
-				<div id="meteoInfo"><h1 class="text-center">{results}</h1></div></>
-						);
+			<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
+				 <label>
+				 Location :
+				 <input type="text" name="location" defaultValue={location} size="50"/>
+				 </label>
+				 <input type="submit" value="Submit" />
+			</form></div>
+			<div id="meteoInfo"><h2 class="text-center">{results.location.name}, {results.location.country}</h2>
+			
+			<p class="text-center">Last update: {results.current.last_updated}</p>
+			
+			<h1 class="text-center">Temperature: {results.current.temp_c} °C</h1>
+			
+			<h1 class="text-center">Condition: {results.current.condition.text}</h1>
+			
+			<h2 class="text-center">Wind speed: {results.current.wind_kph} kilometers per hour</h2>
+			
+			<h2 class="text-center">Humidity: {results.current.humidity}%</h2></div></>
+			);
 		}
 		
 		return returnValue
@@ -93,6 +107,9 @@
 </body>
 </html>
 <style>
-    body {background-color: lightgrey;}
+    body {background-color: lightgrey;
+			font-family: Georgia, serif}
 	.jumbotron {background-color: white;}
+	#meteoInfo {padding-top: 10%}
+	#form {padding-top: 1%}
 </style>
