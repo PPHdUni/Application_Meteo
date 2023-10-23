@@ -10,30 +10,15 @@
 </head>
 <body>
 	<h2 class="text-center">Current weather</h2>
-	<div class="jumbotron container" id="root" style="padding-bottom: 30%">
+	<div class="jumbotron container" id="root" style="height: 550px">
 		<h1 class="text-center">Welcome</h1>
 	</div>
+	<div class="text-center">
+		<h4 class="text-center">Weather data provided by OpenWeather</h4>
+		<a href="https://openweathermap.org/">https://openweathermap.org/</a>
+		<img src="OpenWeather-Master-Logo RGB.jpg" alt="OpenWeather Logo" width="130" height="100" >
+	</div>
 	<script type="text/babel">
-	
-	/*class MeteoApp extends React.Component {
-	
-		constructor(props) {
-			super(props);
-			this.state = {location: 0, welcome: true};
-			this.handleSubmit = this.handleSubmit.bind(this);
-		}
-		
-		handleSubmit(event) {
-			event.preventDefault();
-			this.setState({location: event.target.location, welcome: false});
-		}
-		
-		render() {
-		
-		
-		}
-	
-	} */
 	
 	var welcome = true
 
@@ -41,8 +26,9 @@
 	
 		var location = ""
 		var returnValue
+		var lastUpdated
 		
-		const key = "***REMOVED***"
+		const key = "ca8db42fb8f7620a42dad87ea45dafda"
 	  
 		const { useEffect } = React
 		const { useState } = React
@@ -55,12 +41,18 @@
 			event.preventDefault();
 			welcome = false
 		
-			fetch('https://api.weatherapi.com/v1/current.json?key='+key+'&q='+location)
+			fetch("https://api.openweathermap.org/data/2.5/weather?q="+location+"&units=metric&appid="+key)
 				.then(response => response.json())
 				.then(function(myJson) {
 					updateResults(myJson);
 					console.log(location);
 				});
+		}
+		
+		const unixToDate = function (unixDT) {
+			lastUpdated = new Date();
+			lastUpdated.setTime(unixDT*1000);
+			return lastUpdated.toString()
 		}
 								
 		if(welcome) {
@@ -76,6 +68,10 @@
 			<h1 class="text-center">Welcome</h1></div></>
 			);}
 		else {
+		
+			//lastUpdated = new Date();
+			//lastUpdated.setTime(results.dt);
+			
 			returnValue = ( 
 			<><div id="form"> <form class="text-center" onSubmit={fetchMeteo}>
 				 <label>
@@ -84,17 +80,17 @@
 				 </label>
 				 <input type="submit" value="Submit" />
 			</form></div>
-			<div id="meteoInfo"><h2 class="text-center">{results.location.name}, {results.location.country}</h2>
+			<div id="meteoInfo"><h2 class="text-center">{results.name}, {results.sys.country}</h2>
 			
-			<p class="text-center">Last update: {results.current.last_updated}</p>
+			<p class="text-center">Last update: {unixToDate(results.dt)}</p>
 			
-			<h1 class="text-center">Temperature: {results.current.temp_c} °C</h1>
+			<h1 class="text-center">Temperature: {results.main.temp} °C</h1>
 			
-			<h1 class="text-center">Condition: {results.current.condition.text}</h1>
+			<h1 class="text-center">Condition: {results.weather[0].main}</h1>
 			
-			<h2 class="text-center">Wind speed: {results.current.wind_kph} kilometers per hour</h2>
+			<h2 class="text-center">Wind speed: {results.wind.speed} meters per second</h2>
 			
-			<h2 class="text-center">Humidity: {results.current.humidity}%</h2></div></>
+			<h2 class="text-center">Humidity: {results.main.humidity}%</h2></div></>
 			);
 		}
 		
